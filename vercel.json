@@ -8,15 +8,15 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/index"
+      "destination": "/api/index?__path=/api/$1"
     },
     {
       "source": "/docs",
-      "destination": "/api/index"
+      "destination": "/api/index?__path=/docs"
     },
     {
       "source": "/openapi.json",
-      "destination": "/api/index"
+      "destination": "/api/index?__path=/openapi.json"
     }
   ]
 }
