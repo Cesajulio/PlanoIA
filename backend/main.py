@@ -22,7 +22,8 @@ from .schemas import (
 )
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-FRONTEND_DIR = BASE_DIR / "frontend"
+PUBLIC_DIR = BASE_DIR / "public"
+STATIC_DIR = PUBLIC_DIR / "static"
 
 load_dotenv(BASE_DIR / ".env")
 
@@ -30,6 +31,7 @@ app = FastAPI(
     title="PlanoIA — Planejamento de Aulas com IA (BNCC)",
     description="API do projeto de extensão universitária para apoio pedagógico a professores da Educação Básica.",
     version="1.0.0",
+    redirect_slashes=False,
 )
 
 app.add_middleware(
@@ -117,13 +119,13 @@ async def generate_lesson_plan(
     )
 
 
-if FRONTEND_DIR.exists():
-    app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
+if not os.getenv("VERCEL") and STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 @app.get("/", include_in_schema=False)
 def serve_index() -> FileResponse:
-    index_file = FRONTEND_DIR / "index.html"
+    index_file = PUBLIC_DIR / "index.html"
     if not index_file.exists():
         raise HTTPException(status_code=404, detail="Interface frontend não encontrada.")
     return FileResponse(str(index_file))
